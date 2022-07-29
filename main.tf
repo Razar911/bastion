@@ -8,7 +8,7 @@ data "aws_instance" "BastionHost" {
   ]
   filter {
     name   = "tag:Name"
-    values = ["Bastion in ASG"]
+    values = ["${var.server_name} in ASG"]
   }
   filter {
     name   = "instance-state-name"
