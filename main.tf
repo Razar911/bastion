@@ -33,7 +33,14 @@ resource "aws_launch_template" "BastionLT" {
   image_id        = var.bastion_ami
   instance_type   = var.ec2_instance_type
   security_group_names = [aws_security_group.Bastion_SecurityGroup.name]
-  user_data = filebase64("user_data_bastion.sh")
+  user_data = base64encode(
+    templatefile(
+      "user_data_bastion.sh.tpl",
+      {
+        server_name = "${var.server_name}"
+      }
+    )
+    )
   key_name                    = "common"
   
 
