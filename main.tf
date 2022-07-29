@@ -2,6 +2,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "aws_availability_zones" "available" {}
+
 ### AWS Launch Configuration -->
 resource "aws_launch_template" "BastionLT" {
   //name = "Bastion"
@@ -104,8 +106,6 @@ data "aws_instance" "BastionHost" {
   }
   
 }
-
-data "aws_availability_zones" "available" {}
 
 ### AWS Elastic IP -->
 resource "aws_eip" "bastionStaticIp" {
