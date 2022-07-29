@@ -2,30 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_instance" "BastionHost" {
-  depends_on = [
-    aws_autoscaling_group.BastionASG
-  ]
-  filter {
-    name   = "tag:Name"
-    values = ["${var.server_name} in ASG"]
-  }
-  filter {
-    name   = "instance-state-name"
-    values = ["running", "pending"]
-  }
-  
-}
-
-data "aws_availability_zones" "available" {}
-
-### AWS Elastic IP -->
-resource "aws_eip" "bastionStaticIp" {
-  instance = data.aws_instance.BastionHost.id
-  tags     = var.common_tags
-}
-### <--
-
 ### AWS Launch Configuration -->
 resource "aws_launch_template" "BastionLT" {
   //name = "Bastion"
@@ -42,7 +18,6 @@ resource "aws_launch_template" "BastionLT" {
     )
     )
   key_name                    = "common"
-  
 
   block_device_mappings {
     device_name = "/dev/sda1"
@@ -112,6 +87,30 @@ resource "aws_security_group" "Bastion_SecurityGroup" {
   }
 
   tags = var.common_tags
+}
+### <--
+
+data "aws_instance" "BastionHost" {
+  depends_on = [
+    aws_autoscaling_group.BastionASG
+  ]
+  filter {
+    name   = "tag:Name"
+    values = ["${var.server_name} in ASG"]
+  }
+  filter {
+    name   = "instance-state-name"
+    values = ["running", "pending"]
+  }
+  
+}
+
+data "aws_availability_zones" "available" {}
+
+### AWS Elastic IP -->
+resource "aws_eip" "bastionStaticIp" {
+  instance = data.aws_instance.BastionHost.id
+  tags     = var.common_tags
 }
 ### <--
 
